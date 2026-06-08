@@ -181,7 +181,11 @@ export async function googleAuth(_req: Request, res: Response): Promise<void> {
 
 export async function googleCallback(req: Request, res: Response): Promise<void> {
   try {
-    const { code } = req.query
+    const { code, error, error_description } = req.query
+    if (error) {
+      res.redirect(`${process.env.FRONTEND_URL ?? 'http://localhost:3000'}/login?error=${encodeURIComponent(String(error_description || error))}`)
+      return
+    }
     if (!code || typeof code !== 'string') {
       res.status(400).json({ error: 'Missing code' })
       return
@@ -215,6 +219,7 @@ export async function googleCallback(req: Request, res: Response): Promise<void>
     res.redirect(process.env.FRONTEND_URL ?? 'http://localhost:3000')
   } catch (err: unknown) {
     const error = err as Error
+    clearTokenCookies(res)
     res.redirect(`${process.env.FRONTEND_URL ?? 'http://localhost:3000'}/login?error=${encodeURIComponent(error.message)}`)
   }
 }
