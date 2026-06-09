@@ -1,67 +1,67 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { useAuth } from '../../lib/auth-context'
-import { apiRequest } from '../../lib/api'
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { useAuth } from "../../lib/auth-context";
+import { apiRequest } from "../../lib/api";
 
-const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000'
+const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
 
 interface FormRecord {
-  id: string
-  status: 'pending' | 'under_review' | 'approved' | 'rejected' | 'cancelled'
-  companyName: string
-  taxId: string
-  businessType: string
-  fileName: string
-  submittedAt: string
-  updatedAt: string
+  id: string;
+  status: "pending" | "under_review" | "approved" | "rejected" | "cancelled";
+  companyName: string;
+  taxId: string;
+  businessType: string;
+  fileName: string;
+  submittedAt: string;
+  updatedAt: string;
 }
 
-const STATUS_LABELS: Record<FormRecord['status'], string> = {
-  pending: 'รอการตรวจสอบ',
-  under_review: 'กำลังตรวจสอบ',
-  approved: 'อนุมัติแล้ว',
-  rejected: 'ปฏิเสธ',
-  cancelled: 'ยกเลิกแล้ว',
-}
+const STATUS_LABELS: Record<FormRecord["status"], string> = {
+  pending: "รอการตรวจสอบ",
+  under_review: "กำลังตรวจสอบ",
+  approved: "อนุมัติแล้ว",
+  rejected: "ปฏิเสธ",
+  cancelled: "ยกเลิกแล้ว",
+};
 
-const STATUS_COLORS: Record<FormRecord['status'], string> = {
-  pending: 'bg-yellow-100 text-yellow-800',
-  under_review: 'bg-blue-100 text-blue-800',
-  approved: 'bg-green-100 text-green-800',
-  rejected: 'bg-red-100 text-red-800',
-  cancelled: 'bg-gray-100 text-gray-600',
-}
+const STATUS_COLORS: Record<FormRecord["status"], string> = {
+  pending: "bg-yellow-100 text-yellow-800",
+  under_review: "bg-blue-100 text-blue-800",
+  approved: "bg-green-100 text-green-800",
+  rejected: "bg-red-100 text-red-800",
+  cancelled: "bg-gray-100 text-gray-600",
+};
 
 export default function StatusPage() {
-  const router = useRouter()
-  const { user, loading } = useAuth()
-  const [forms, setForms] = useState<FormRecord[]>([])
-  const [fetching, setFetching] = useState(true)
+  const router = useRouter();
+  const { user, loading } = useAuth();
+  const [forms, setForms] = useState<FormRecord[]>([]);
+  const [fetching, setFetching] = useState(true);
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push('/login')
+      router.push("/login");
     }
-  }, [loading, user, router])
+  }, [loading, user, router]);
 
   useEffect(() => {
-    if (!user) return
+    if (!user) return;
 
-    apiRequest<FormRecord[]>('/api/forms')
+    apiRequest<FormRecord[]>("/api/forms")
       .then(setForms)
       .catch(() => setForms([]))
-      .finally(() => setFetching(false))
-  }, [user])
+      .finally(() => setFetching(false));
+  }, [user]);
 
   if (loading || (!user && !fetching)) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
         <p className="text-gray-500">กำลังโหลด...</p>
       </div>
-    )
+    );
   }
 
   return (
@@ -81,7 +81,10 @@ export default function StatusPage() {
       ) : forms.length === 0 ? (
         <div className="mt-16 text-center">
           <p className="text-gray-500">ยังไม่มีการยื่นเอกสาร</p>
-          <Link href="/upload" className="mt-4 inline-block text-blue-600 hover:underline">
+          <Link
+            href="/upload"
+            className="mt-4 inline-block text-blue-600 hover:underline"
+          >
             ยื่นเอกสารเลย
           </Link>
         </div>
@@ -94,7 +97,9 @@ export default function StatusPage() {
             >
               <div className="flex items-start justify-between">
                 <div>
-                  <h2 className="font-semibold text-gray-900">{form.companyName}</h2>
+                  <h2 className="font-semibold text-gray-900">
+                    {form.companyName}
+                  </h2>
                   <p className="mt-1 text-sm text-gray-500">
                     TAX ID: {form.taxId} · {form.businessType}
                   </p>
@@ -108,11 +113,11 @@ export default function StatusPage() {
 
               <div className="mt-3 flex items-center justify-between text-xs text-gray-400">
                 <span>
-                  ส่งเมื่อ{' '}
-                  {new Date(form.submittedAt).toLocaleDateString('th-TH', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
+                  ส่งเมื่อ{" "}
+                  {new Date(form.submittedAt).toLocaleDateString("th-TH", {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
                   })}
                 </span>
                 <a
@@ -129,5 +134,5 @@ export default function StatusPage() {
         </div>
       )}
     </div>
-  )
+  );
 }

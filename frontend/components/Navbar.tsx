@@ -1,16 +1,16 @@
-'use client'
+"use client";
 
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { useAuth } from '../lib/auth-context'
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuth } from "../lib/auth-context";
 
 export default function Navbar() {
-  const { user, loading, logout } = useAuth()
-  const router = useRouter()
+  const { user, loading, logout } = useAuth();
+  const router = useRouter();
 
   async function handleLogout() {
-    await logout()
-    router.push('/')
+    await logout();
+    router.push("/");
   }
 
   return (
@@ -63,5 +63,5 @@ export default function Navbar() {
         )}
       </div>
     </nav>
-  )
+  );
 }
